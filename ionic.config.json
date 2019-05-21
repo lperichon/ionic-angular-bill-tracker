@@ -1,5 +1,7 @@
 {
   "name": "bill-tracker",
-  "integrations": {},
+  "integrations": {
+    "capacitor": {}
+  },
   "type": "angular"
 }
