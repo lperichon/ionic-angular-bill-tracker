@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { LoadingController, AlertController } from '@ionic/angular';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-signup',
@@ -16,7 +16,8 @@ export class SignupPage implements OnInit {
     private alertCtrl: AlertController,
     private formBuilder: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {
     this.signupForm = this.formBuilder.group({
       email: ['', Validators.required],
@@ -38,7 +39,9 @@ export class SignupPage implements OnInit {
       const password: string = signupForm.value.password;
       await this.authService.linkAccount(email, password);
       await loading.dismiss();
-      this.router.navigateByUrl('/home');
+      this.router.navigateByUrl(
+        `/bill-detail/${this.route.snapshot.paramMap.get('billId')}`
+      );
     } catch (error) {
       await loading.dismiss();
       const alert = await this.alertCtrl.create({

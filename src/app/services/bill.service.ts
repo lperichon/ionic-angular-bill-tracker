@@ -5,6 +5,10 @@ import {
   AngularFirestoreCollection,
   AngularFirestoreDocument
 } from '@angular/fire/firestore';
+import {
+  AngularFireStorage,
+  AngularFireStorageReference
+} from '@angular/fire/storage';
 import * as firebase from 'firebase/app';
 
 @Injectable({
@@ -16,7 +20,8 @@ export class BillService {
 
   constructor(
     public afAuth: AngularFireAuth,
-    private firestore: AngularFirestore
+    private firestore: AngularFirestore,
+    private afStorage: AngularFireStorage
   ) {
     this.afAuth.authState.subscribe(user => {
       this.userId = user.uid;
@@ -31,6 +36,8 @@ export class BillService {
   }
 
   getBill(billId: string): AngularFirestoreDocument<any> {
+    console.log(`User id is ${this.userId}`);
+    console.log(`Bill id is ${billId}`);
     return this.firestore.doc(`/userProfile/${this.userId}/billList/${billId}`);
   }
 
@@ -59,5 +66,21 @@ export class BillService {
 
   payBill(billId: string): Promise<any> {
     return this.billList.doc(billId).update({ paid: true });
+  }
+
+  takeBillPhoto(billId: string, imageURL: string): Promise<any> {
+    const storageRef: AngularFireStorageReference = this.afStorage.ref(
+      `${this.userId}/${billId}/billPicture/`
+    );
+
+    return storageRef
+      .putString(imageURL, 'base64', {
+        contentType: 'image/png'
+      })
+      .then(() => {
+        return this.billList.doc(billId).update({
+          picture: storageRef.getDownloadURL()
+        });
+      });
   }
 }

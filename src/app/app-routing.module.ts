@@ -19,7 +19,7 @@ const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
-    path: 'bill-detail',
+    path: 'bill-detail/:id',
     loadChildren: './pages/bill-detail/bill-detail.module#BillDetailPageModule',
     canActivate: [AuthGuard]
   },
@@ -30,7 +30,7 @@ const routes: Routes = [
       './pages/reset-password/reset-password.module#ResetPasswordPageModule'
   },
   {
-    path: 'signup',
+    path: 'signup/:billId',
     loadChildren: './pages/signup/signup.module#SignupPageModule',
     canActivate: [AuthGuard]
   }

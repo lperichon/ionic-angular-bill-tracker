@@ -34,18 +34,16 @@ export class AuthService {
       password
     );
 
-    return this.afAuth.auth.currentUser
-      .linkAndRetrieveDataWithCredential(credential)
-      .then(
-        userCredential => {
-          this.firestore
-            .doc(`/userProfile/${userCredential.user.uid}`)
-            .update({ email });
-        },
-        error => {
-          console.log('There was an error linking the account', error);
-        }
-      );
+    return this.afAuth.auth.currentUser.linkWithCredential(credential).then(
+      userCredential => {
+        this.firestore
+          .doc(`/userProfile/${userCredential.user.uid}`)
+          .update({ email });
+      },
+      error => {
+        console.log('There was an error linking the account', error);
+      }
+    );
   }
 
   resetPassword(email: string): Promise<any> {
