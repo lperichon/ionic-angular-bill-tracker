@@ -1,13 +1,15 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
-import { AuthGuard } from './services/auth.guard';
+import { redirectUnauthorizedTo, canActivate } from '@angular/fire/auth-guard';
+
+const redirectUnauthorizedToLanding = redirectUnauthorizedTo(['landing']);
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   {
     path: 'home',
     loadChildren: './home/home.module#HomePageModule',
-    canActivate: [AuthGuard]
+    ...canActivate(redirectUnauthorizedToLanding)
   },
   {
     path: 'landing',
@@ -16,12 +18,12 @@ const routes: Routes = [
   {
     path: 'bill-create',
     loadChildren: './pages/bill-create/bill-create.module#BillCreatePageModule',
-    canActivate: [AuthGuard]
+    ...canActivate(redirectUnauthorizedToLanding)
   },
   {
     path: 'bill-detail/:id',
     loadChildren: './pages/bill-detail/bill-detail.module#BillDetailPageModule',
-    canActivate: [AuthGuard]
+    ...canActivate(redirectUnauthorizedToLanding)
   },
   { path: 'login', loadChildren: './pages/login/login.module#LoginPageModule' },
   {
@@ -32,7 +34,7 @@ const routes: Routes = [
   {
     path: 'signup/:billId',
     loadChildren: './pages/signup/signup.module#SignupPageModule',
-    canActivate: [AuthGuard]
+    ...canActivate(redirectUnauthorizedToLanding)
   }
 ];
 
