@@ -4,6 +4,32 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content padding>
+  <form [formGroup]="newBillForm">
+    <ion-item>
+      <ion-label position="stacked">Bill Name</ion-label>
+      <ion-input formControlName="name" type="text" placeholder="How do you identify this bill?"
+        [class.invalid]="!newBillForm.controls['name'].valid && newBillForm.controls['name'].touched">
+      </ion-input>
+    </ion-item>
 
+    <ion-item>
+      <ion-label position="stacked">Amount</ion-label>
+      <ion-input formControlName="amount" type="number" placeholder="How much do you have to pay?"
+        [class.invalid]="!newBillForm.controls['amount'].valid && newBillForm.controls['amount'].touched">
+      </ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Due Date</ion-label>
+      <ion-datetime displayFormat="D MMM, YY" pickerFormat="DD MMM YYYY" formControlName="dueDate" max="2020-10-31"
+        [class.invalid]="!newBillForm.controls['dueDate'].valid
+        && newBillForm.controls['dueDate'].touched">
+      </ion-datetime>
+    </ion-item>
+
+    <ion-button expand="block" (click)="createBill(newBillForm)">
+      Create new bill
+    </ion-button>
+  </form>
 </ion-content>
