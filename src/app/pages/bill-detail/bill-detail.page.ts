@@ -3,6 +3,10 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { ActionSheetController, AlertController } from '@ionic/angular';
 import { BillService } from '../../services/bill.service';
 import { Observable } from 'rxjs';
+import { AuthService } from '../../services/auth.service';
+import { Plugins, CameraResultType } from '@capacitor/core';
+
+const { Camera } = Plugins;
 
 @Component({
   selector: 'app-bill-detail',
@@ -12,13 +16,14 @@ import { Observable } from 'rxjs';
 export class BillDetailPage implements OnInit {
   public bill: Observable<any>;
   public billId: string;
-
+  public placeholderPicture = 'assets/img/debt-collector.jpg';
   constructor(
     public router: Router,
     public route: ActivatedRoute,
     public actionCtrl: ActionSheetController,
     public alertCtrl: AlertController,
-    public billService: BillService
+    public billService: BillService,
+    private authService: AuthService
   ) {}
 
   async ngOnInit() {
@@ -59,5 +64,32 @@ export class BillDetailPage implements OnInit {
       ]
     });
     action.present();
+  }
+
+  async uploadPicture(): Promise<void> {
+    const user = await this.authService.getUser();
+    if (user.isAnonymous === true) {
+      const alert = await this.alertCtrl.create({
+        message:
+          'If you want to continue you will need to provide an email and create a password',
+        buttons: [
+          { text: 'Cancel' },
+          {
+            text: 'OK',
+            handler: data => {
+              this.router.navigate(['/signup', this.billId]);
+            }
+          }
+        ]
+      });
+      alert.present();
+    } else {
+      const debtPicture = await Camera.getPhoto({
+        quality: 90,
+        allowEditing: false,
+        resultType: CameraResultType.Base64
+      });
+      this.billService.takeBillPhoto(this.billId, debtPicture.base64String);
+    }
   }
 }

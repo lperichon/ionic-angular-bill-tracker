@@ -15,7 +15,7 @@ const routes: Routes = [
   },
   { path: 'login', loadChildren: './pages/login/login.module#LoginPageModule' },
   {
-    path: 'signup',
+    path: 'signup/:billId',
     loadChildren: './pages/signup/signup.module#SignupPageModule',
     ...canActivate(redirectToLogin)
   },

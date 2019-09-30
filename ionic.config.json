@@ -1,5 +1,7 @@
 {
   "name": "AuthStarterAngularFire",
-  "integrations": {},
+  "integrations": {
+    "capacitor": {}
+  },
   "type": "angular"
 }

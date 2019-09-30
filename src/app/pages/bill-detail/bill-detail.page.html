@@ -13,7 +13,10 @@
 </ion-header>
 
 <ion-content padding>
-  <img src="assets/img/debt-collector.jpg" />
+  <img [src]="(bill | async)?.picture || placeholderPicture" (click)="uploadPicture()" />
+  <span *ngIf="!(bill | async)?.picture">
+    Click the image to upload a picture of your debt/bill
+  </span>
   <ion-card>
     <ion-card-header> Debt Information </ion-card-header>
     <ion-list>

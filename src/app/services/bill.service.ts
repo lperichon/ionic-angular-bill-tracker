@@ -1,21 +1,25 @@
 import { Injectable } from '@angular/core';
-import { AngularFireAuth } from '@angular/fire/auth';
 import {
   AngularFirestore,
   AngularFirestoreCollection,
   AngularFirestoreDocument
 } from '@angular/fire/firestore';
+import {
+  AngularFireStorage,
+  AngularFireStorageReference
+} from '@angular/fire/storage';
 import { AuthService } from './auth.service';
 import * as firebase from 'firebase/app';
+import { UploadTaskSnapshot } from '@angular/fire/storage/interfaces';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BillService {
   constructor(
-    private afAuth: AngularFireAuth,
     private firestore: AngularFirestore,
-    private authService: AuthService
+    private authService: AuthService,
+    private afStorage: AngularFireStorage
   ) {}
 
   async getBillList(): Promise<AngularFirestoreCollection<any>> {
@@ -60,5 +64,28 @@ export class BillService {
     return this.firestore
       .doc(`/userProfile/${user.uid}/billList/${billId}`)
       .update({ paid: true });
+  }
+
+  async takeBillPhoto(billId: string, imageURL: string): Promise<any> {
+    const user: firebase.User = await this.authService.getUser();
+    const storageRef: AngularFireStorageReference = this.afStorage.ref(
+      `${user.uid}/${billId}/billPicture/`
+    );
+
+    const uploadProcess: UploadTaskSnapshot = await storageRef.putString(
+      imageURL,
+      'base64',
+      {
+        contentType: 'image/png'
+      }
+    );
+
+    const downLoadURL: string = await storageRef.getDownloadURL().toPromise();
+
+    return this.firestore
+      .doc(`/userProfile/${user.uid}/billList/${billId}`)
+      .update({
+        picture: downLoadURL
+      });
   }
 }
