@@ -39,7 +39,7 @@ const routes: Routes = [
     ...canActivate(redirectToLogin)
   },
   {
-    path: 'bill-detail',
+    path: 'bill-detail/:id',
     loadChildren: './pages/bill-detail/bill-detail.module#BillDetailPageModule',
     ...canActivate(redirectToLogin)
   }
