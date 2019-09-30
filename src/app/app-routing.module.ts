@@ -3,7 +3,7 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
 import { redirectUnauthorizedTo, canActivate } from '@angular/fire/auth-guard';
 
-const redirectToLogin = redirectUnauthorizedTo(['login']);
+const redirectToLogin = redirectUnauthorizedTo(['landing']);
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -16,21 +16,33 @@ const routes: Routes = [
   { path: 'login', loadChildren: './pages/login/login.module#LoginPageModule' },
   {
     path: 'signup',
-    loadChildren: './pages/signup/signup.module#SignupPageModule'
+    loadChildren: './pages/signup/signup.module#SignupPageModule',
+    ...canActivate(redirectToLogin)
   },
   {
     path: 'reset-password',
     loadChildren:
-    './pages/reset-password/reset-password.module#ResetPasswordPageModule'
+      './pages/reset-password/reset-password.module#ResetPasswordPageModule'
   },
   {
     path: 'profile',
     loadChildren: './pages/profile/profile.module#ProfilePageModule',
     ...canActivate(redirectToLogin)
   },
-  { path: 'landing', loadChildren: './pages/landing/landing.module#LandingPageModule' },
-  { path: 'bill-create', loadChildren: './pages/bill-create/bill-create.module#BillCreatePageModule' },
-  { path: 'bill-detail', loadChildren: './pages/bill-detail/bill-detail.module#BillDetailPageModule' }
+  {
+    path: 'landing',
+    loadChildren: './pages/landing/landing.module#LandingPageModule'
+  },
+  {
+    path: 'bill-create',
+    loadChildren: './pages/bill-create/bill-create.module#BillCreatePageModule',
+    ...canActivate(redirectToLogin)
+  },
+  {
+    path: 'bill-detail',
+    loadChildren: './pages/bill-detail/bill-detail.module#BillDetailPageModule',
+    ...canActivate(redirectToLogin)
+  }
 ];
 
 @NgModule({

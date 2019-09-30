@@ -18,7 +18,7 @@ export class SignupPage implements OnInit {
 
   async signupUser(credentials: UserCredential): Promise<void> {
     try {
-      const userCredential: firebase.auth.UserCredential = await this.authService.signup(
+      const userCredential: firebase.auth.UserCredential = await this.authService.linkAccount(
         credentials.email,
         credentials.password
       );

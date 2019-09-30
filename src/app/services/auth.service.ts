@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
+import * as firebase from 'firebase/app';
+import 'firebase/auth';
 import { first } from 'rxjs/operators';
 
 @Injectable({
@@ -24,18 +26,23 @@ export class AuthService {
     return this.afAuth.auth.signInWithEmailAndPassword(email, password);
   }
 
-  async signup(
-    email: string,
-    password: string
-  ): Promise<firebase.auth.UserCredential> {
-    const newUserCredential: firebase.auth.UserCredential = await this.afAuth.auth.createUserWithEmailAndPassword(
+  anonymousLogin(): Promise<firebase.auth.UserCredential> {
+    return this.afAuth.auth.signInAnonymously();
+  }
+
+  async linkAccount(email: string, password: string): Promise<any> {
+    const credential = firebase.auth.EmailAuthProvider.credential(
       email,
       password
     );
-    await this.firestore
-      .doc(`userProfile/${newUserCredential.user.uid}`)
-      .set({ email });
-    return newUserCredential;
+
+    const userCredential: firebase.auth.UserCredential = await this.afAuth.auth.currentUser.linkWithCredential(
+      credential
+    );
+
+    return this.firestore
+      .doc(`/userProfile/${userCredential.user.uid}`)
+      .set({ email }, { merge: true });
   }
 
   resetPassword(email: string): Promise<void> {
