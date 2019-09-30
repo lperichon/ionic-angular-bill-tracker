@@ -1,37 +1,18 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title></ion-title>
+    <ion-title>MetraRev</ion-title>
     <ion-buttons slot="end">
-      <ion-button routerLink="/bill-create">
-        <ion-icon slot="icon-only" name="add"></ion-icon>
+      <ion-button routerLink="/profile">
+        <ion-icon slot="icon-only" name="person"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-list>
-    <ion-list-header> UnPaid Bills </ion-list-header>
-    <ion-item *ngFor="let bill of billList | async" (click)="moreBillOptions(bill.id)"
-      [class.hide]="bill.paid === true">
-      <ion-icon name="timer" color="danger" slot="end"></ion-icon>
-      <ion-label>
-        <h2>{{bill.name}}</h2>
-        <h3>Total: <strong>${{bill.amount}}</strong></h3>
-        <p>Pay before: <strong>{{bill.dueDate}}</strong></p>
-      </ion-label>
-    </ion-item>
-  </ion-list>
-
-  <ion-list>
-    <ion-list-header> Paid Bills </ion-list-header>
-    <ion-item *ngFor="let bill of billList | async" routerLink="/bill-detail/{{bill.id}}"
-      [class.hide]="bill.paid === false">
-      <ion-icon name="checkmark" color="secondary" slot="end"></ion-icon>
-      <ion-label>
-        <h2>{{bill.name}}</h2>
-        <h3>Total: <strong>${{bill.amount}}</strong></h3>
-      </ion-label>
-    </ion-item>
-  </ion-list>
+  <div class="ion-padding">
+    The world is your oyster.
+    <p>If you get lost, the <a target="_blank" rel="noopener" href="https://ionicframework.com/docs/">docs</a> will be
+      your guide.</p>
+  </div>
 </ion-content>

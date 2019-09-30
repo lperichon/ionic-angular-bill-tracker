@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { LoadingController, AlertController } from '@ionic/angular';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AuthService } from '../../services/auth.service';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { UserCredential } from 'src/app/models/user';
+import { AuthService } from 'src/app/services/auth.service';
+import { AuthFormComponent } from 'src/app/components/auth-form/auth-form.component';
+import { AlertController } from '@ionic/angular';
 import { Router } from '@angular/router';
 
 @Component({
@@ -10,51 +11,36 @@ import { Router } from '@angular/router';
   styleUrls: ['./reset-password.page.scss']
 })
 export class ResetPasswordPage implements OnInit {
-  public resetPasswordForm: FormGroup;
+  @ViewChild(AuthFormComponent, { static: false })
+  resetPasswordForm: AuthFormComponent;
   constructor(
-    private loadingCtrl: LoadingController,
-    private alertCtrl: AlertController,
-    private formBuilder: FormBuilder,
     private authService: AuthService,
+    private alertCtrl: AlertController,
     private router: Router
-  ) {
-    this.resetPasswordForm = this.formBuilder.group({
-      email: ['', Validators.required]
-    });
-  }
+  ) {}
 
   ngOnInit() {}
 
-  async resetPassword(resetPasswordForm): Promise<void> {
+  async resetPassword(credentials: UserCredential): Promise<void> {
     try {
-      const email: string = this.resetPasswordForm.value.email;
-      await this.authService.resetPassword(email);
-
+      await this.authService.resetPassword(credentials.email);
+      await this.resetPasswordForm.hideLoading();
       const alert = await this.alertCtrl.create({
-        message: 'We sent you a reset link to your email',
+        message: 'Check your inbox for the password reset link',
         buttons: [
           {
             text: 'Ok',
             role: 'cancel',
             handler: () => {
-              this.router.navigateByUrl('/login');
+              this.router.navigateByUrl('login');
             }
           }
         ]
       });
-      alert.present();
+      await alert.present();
     } catch (error) {
-      const errorMessage: string = error.message;
-      const errorAlert = await this.alertCtrl.create({
-        message: errorMessage,
-        buttons: [
-          {
-            text: 'Ok',
-            role: 'cancel'
-          }
-        ]
-      });
-      errorAlert.present();
+      await this.resetPasswordForm.hideLoading();
+      this.resetPasswordForm.handleError(error);
     }
   }
 }

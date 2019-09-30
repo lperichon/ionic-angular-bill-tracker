@@ -1,41 +1,36 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+
 import { redirectUnauthorizedTo, canActivate } from '@angular/fire/auth-guard';
 
-const redirectUnauthorizedToLanding = redirectUnauthorizedTo(['landing']);
+const redirectToLogin = redirectUnauthorizedTo(['login']);
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   {
     path: 'home',
-    loadChildren: './home/home.module#HomePageModule',
-    ...canActivate(redirectUnauthorizedToLanding)
-  },
-  {
-    path: 'landing',
-    loadChildren: './pages/landing/landing.module#LandingPageModule'
-  },
-  {
-    path: 'bill-create',
-    loadChildren: './pages/bill-create/bill-create.module#BillCreatePageModule',
-    ...canActivate(redirectUnauthorizedToLanding)
-  },
-  {
-    path: 'bill-detail/:id',
-    loadChildren: './pages/bill-detail/bill-detail.module#BillDetailPageModule',
-    ...canActivate(redirectUnauthorizedToLanding)
+    loadChildren: () =>
+      import('./home/home.module').then(m => m.HomePageModule),
+    ...canActivate(redirectToLogin)
   },
   { path: 'login', loadChildren: './pages/login/login.module#LoginPageModule' },
   {
-    path: 'reset-password',
-    loadChildren:
-      './pages/reset-password/reset-password.module#ResetPasswordPageModule'
+    path: 'signup',
+    loadChildren: './pages/signup/signup.module#SignupPageModule'
   },
   {
-    path: 'signup/:billId',
-    loadChildren: './pages/signup/signup.module#SignupPageModule',
-    ...canActivate(redirectUnauthorizedToLanding)
-  }
+    path: 'reset-password',
+    loadChildren:
+    './pages/reset-password/reset-password.module#ResetPasswordPageModule'
+  },
+  {
+    path: 'profile',
+    loadChildren: './pages/profile/profile.module#ProfilePageModule',
+    ...canActivate(redirectToLogin)
+  },
+  { path: 'landing', loadChildren: './pages/landing/landing.module#LandingPageModule' },
+  { path: 'bill-create', loadChildren: './pages/bill-create/bill-create.module#BillCreatePageModule' },
+  { path: 'bill-detail', loadChildren: './pages/bill-detail/bill-detail.module#BillDetailPageModule' }
 ];
 
 @NgModule({

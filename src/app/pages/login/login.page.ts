@@ -1,8 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { LoadingController, AlertController } from '@ionic/angular';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-
-import { AuthService } from '../../services/auth.service';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { UserCredential } from 'src/app/models/user';
+import { AuthService } from 'src/app/services/auth.service';
+import { AuthFormComponent } from 'src/app/components/auth-form/auth-form.component';
 import { Router } from '@angular/router';
 
 @Component({
@@ -11,48 +10,23 @@ import { Router } from '@angular/router';
   styleUrls: ['./login.page.scss']
 })
 export class LoginPage implements OnInit {
-  public loginForm: FormGroup;
-
-  constructor(
-    private loadingCtrl: LoadingController,
-    private alertCtrl: AlertController,
-    private formBuilder: FormBuilder,
-    private authService: AuthService,
-    private router: Router
-  ) {
-    this.loginForm = formBuilder.group({
-      email: ['', Validators.required],
-      password: [
-        '',
-        Validators.compose([Validators.minLength(6), Validators.required])
-      ]
-    });
-  }
+  @ViewChild(AuthFormComponent, { static: false }) loginForm: AuthFormComponent;
+  constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit() {}
 
-  async loginUser(loginForm): Promise<void> {
-    const loading = await this.loadingCtrl.create();
+  async loginUser(credentials: UserCredential): Promise<void> {
     try {
-      loading.present();
-
-      const email: string = loginForm.value.email;
-      const password: string = loginForm.value.password;
-      await this.authService.loginUser(email, password);
-      await loading.dismiss();
-      this.router.navigateByUrl('/home');
+      const userCredential: firebase.auth.UserCredential = await this.authService.login(
+        credentials.email,
+        credentials.password
+      );
+      this.authService.userId = userCredential.user.uid;
+      await this.loginForm.hideLoading();
+      this.router.navigateByUrl('home');
     } catch (error) {
-      await loading.dismiss();
-      const alert = await this.alertCtrl.create({
-        message: error.message,
-        buttons: [
-          {
-            text: 'OK',
-            role: 'cancel'
-          }
-        ]
-      });
-      alert.present();
+      await this.loginForm.hideLoading();
+      this.loginForm.handleError(error);
     }
   }
 }

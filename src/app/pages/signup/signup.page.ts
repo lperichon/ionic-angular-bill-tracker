@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { LoadingController, AlertController } from '@ionic/angular';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AuthService } from '../../services/auth.service';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { UserCredential } from 'src/app/models/user';
+import { AuthService } from 'src/app/services/auth.service';
+import { AuthFormComponent } from 'src/app/components/auth-form/auth-form.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-signup',
@@ -10,50 +10,24 @@ import { Router, ActivatedRoute } from '@angular/router';
   styleUrls: ['./signup.page.scss']
 })
 export class SignupPage implements OnInit {
-  public signupForm: FormGroup;
-  constructor(
-    private loadingCtrl: LoadingController,
-    private alertCtrl: AlertController,
-    private formBuilder: FormBuilder,
-    private authService: AuthService,
-    private router: Router,
-    private route: ActivatedRoute
-  ) {
-    this.signupForm = this.formBuilder.group({
-      email: ['', Validators.required],
-      password: [
-        '',
-        Validators.compose([Validators.minLength(6), Validators.required])
-      ]
-    });
-  }
+  @ViewChild(AuthFormComponent, { static: false })
+  signupForm: AuthFormComponent;
+  constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit() {}
 
-  async signupUser(signupForm): Promise<void> {
-    const loading = await this.loadingCtrl.create();
+  async signupUser(credentials: UserCredential): Promise<void> {
     try {
-      loading.present();
-
-      const email: string = signupForm.value.email;
-      const password: string = signupForm.value.password;
-      await this.authService.linkAccount(email, password);
-      await loading.dismiss();
-      this.router.navigateByUrl(
-        `/bill-detail/${this.route.snapshot.paramMap.get('billId')}`
+      const userCredential: firebase.auth.UserCredential = await this.authService.signup(
+        credentials.email,
+        credentials.password
       );
+      this.authService.userId = userCredential.user.uid;
+      await this.signupForm.hideLoading();
+      this.router.navigateByUrl('home');
     } catch (error) {
-      await loading.dismiss();
-      const alert = await this.alertCtrl.create({
-        message: error.message,
-        buttons: [
-          {
-            text: 'OK',
-            role: 'cancel'
-          }
-        ]
-      });
-      alert.present();
+      await this.signupForm.hideLoading();
+      this.signupForm.handleError(error);
     }
   }
 }

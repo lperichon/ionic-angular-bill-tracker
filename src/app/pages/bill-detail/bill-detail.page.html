@@ -1,49 +1,9 @@
 <ion-header>
   <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/home"></ion-back-button>
-    </ion-buttons>
-    <ion-title> {{ (bill | async)?.name }}</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="showOptions()">
-        <ion-icon slot="icon-only" name="more"></ion-icon>
-      </ion-button>
-    </ion-buttons>
+    <ion-title>bill-detail</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content padding>
-  <img [src]="(bill | async)?.picture || placeholderPicture" (click)="uploadPicture()" />
-  <span *ngIf="!(bill | async)?.picture">
-    Click the image to upload a picture of your debt/bill
-  </span>
-  <ion-card>
-    <ion-card-header> Debt Information </ion-card-header>
-    <ion-list>
-      <ion-item>
-        <ion-icon color="secondary" name="information-circle" slot="end"> </ion-icon>
-        <ion-label> {{ (bill | async)?.name }} </ion-label>
-      </ion-item>
+<ion-content>
 
-      <ion-item>
-        <ion-icon color="favorite" name="cash" slot="end"></ion-icon>
-        <ion-label> {{ (bill | async)?.amount }} </ion-label>
-      </ion-item>
-
-      <ion-item>
-        <ion-icon color="secondary" name="calendar" slot="end"></ion-icon>
-        <ion-label> <strong>{{ (bill | async)?.dueDate }}</strong> </ion-label>
-      </ion-item>
-
-      <ion-item *ngIf="(bill | async)?.paid == true">
-        <ion-icon color="favorite" name="checkmark" slot="end"></ion-icon>
-        <ion-label> This bill is paid. </ion-label>
-      </ion-item>
-
-      <ion-item *ngIf="(bill | async)?.paid == false">
-        <ion-icon color="danger" name="timer" slot="end"></ion-icon>
-        <ion-label> You haven't paid this bill. </ion-label>
-      </ion-item>
-    </ion-list>
-  </ion-card>
 </ion-content>
